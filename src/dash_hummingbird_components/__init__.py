@@ -1,10 +1,10 @@
 DATA_PATH = "/data/hbdx_ldap_local/analysis/data/"
 DATASETS = []
 
-from .components import *
-from .global_callbacks import *
-from .io import *
 from .utils import *
+from .components import *
+from .io import *
+from .global_callbacks import *
 
 DATASETS = load_datasets(DATA_PATH)
 
