@@ -7,10 +7,12 @@ from pathlib import Path
 from typing import Any, Dict, List
 
 import dash_daq
+import dash_mantine_components as dmc
 import pandas as pd
 import plotly.io as pio
 from dash import (ALL, MATCH, Input, Output, State, callback, ctx, dash_table,
                   dcc, get_asset_url, html, no_update)
+from dash_iconify import DashIconify
 
 from . import DATA_PATH, DATASETS, exec
 
@@ -44,9 +46,11 @@ class NotebookStarter:
         id_ = f"{name}__{param_string}"
 
         return html.A(
-            [html.Img(src=get_asset_url("Jupyter_logo.svg")), "Generate notebook"],
+            dmc.Button(
+                "Generate notebook",
+                leftIcon=DashIconify(icon="logos:jupyter"),
+            ),
             id={"module": "notebookstarter", "id": id_},
-            className="button icon",
             n_clicks=0,
             target="_blank",
         )
@@ -54,7 +58,6 @@ class NotebookStarter:
 
 @callback(
     Output({"module": "notebookstarter", "id": MATCH}, "children"),
-    Output({"module": "notebookstarter", "id": MATCH}, "className"),
     Output({"module": "notebookstarter", "id": MATCH}, "href"),
     Input({"module": "notebookstarter", "id": MATCH}, "n_clicks"),
     State({"module": "notebookstarter", "id": MATCH}, "id"),
@@ -67,7 +70,11 @@ def __create_notebook(n_clicks, id_, className):
     name = id_.split("__")[0]
     parameters = json.loads(id_[len(name) + 2 :])
     link = exec.start_notebook(name, parameters)
-    return [html.Img(src=get_asset_url("Jupyter_logo.svg")), "Open notebook"], "button icon activated", link
+
+    return (
+        dmc.Button("Open notebook", leftIcon=DashIconify(icon="logos:jupyter"), color="lime"),
+        link,
+    )
 
 
 class DataSetPicker:
@@ -227,7 +234,7 @@ class HTMLTable:
                 row.append(html.Td(HTMLTable._value(value)))
             tbody.append(html.Tr(row, **tr_kwargs.get(idx, {})))
         table.append(html.Tbody(tbody))
-        return html.Table(table, className="infotable", style=style)
+        return dmc.Table(table, style=style)
 
 
 class PueueLog:
