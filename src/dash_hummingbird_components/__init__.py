@@ -1,7 +1,12 @@
-from .utils import *
+DATA_PATH = "/data/hbdx_ldap_local/analysis/data/"
+DATASETS = []
+
 from .components import *
-from .io import *
 from .global_callbacks import *
+from .io import *
+from .utils import *
+
+DATASETS = load_datasets(DATA_PATH)
 
 CM_CAT = [
     "rgb(0, 94, 161)",
@@ -128,6 +133,3 @@ CM_CONT = [
     "#2465a5",
     "#005ea1",
 ]
-
-DATA_PATH = "/data/hbdx_ldap_local/analysis/data/"
-DATASETS = load_datasets(DATA_PATH)
