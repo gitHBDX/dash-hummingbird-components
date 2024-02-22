@@ -1,10 +1,13 @@
+from collections import defaultdict
+from pathlib import Path
+from natsort import natsorted
 import logging
 from typing import Dict, List, Tuple
 
 import colorlover
 import pandas as pd
 
-__all__ = ["list_to_id_dict", "list_to_label_dict", "discrete_background_color_bins"]
+__all__ = ["list_to_id_dict", "list_to_label_dict", "discrete_background_color_bins", "load_datasets"]
 
 logger = logging.getLogger("dhc")
 
@@ -92,8 +95,7 @@ def discrete_background_color_bins(df: pd.DataFrame, n_bins: int = 5, lim: Tuple
                 {
                     "if": {
                         "filter_query": (
-                            "{{{column}}} >= {min_bound}"
-                            + (" && {{{column}}} < {max_bound}" if (i < len(bounds) - 1) else "")
+                            "{{{column}}} >= {min_bound}" + (" && {{{column}}} < {max_bound}" if (i < len(bounds) - 1) else "")
                         ).format(column=column, min_bound=min_bound, max_bound=max_bound),
                         "column_id": column,
                     },
@@ -102,3 +104,8 @@ def discrete_background_color_bins(df: pd.DataFrame, n_bins: int = 5, lim: Tuple
                 }
             )
     return styles
+
+
+def load_datasets(folder: Path) -> Dict[str, List[str]]:
+    folder = Path(folder)
+    return {d.stem: natsorted([f for f in d.glob("*.h5ad")], reverse=True) for d in natsorted(fd for fd in folder.iterdir() if fd.is_dir())}

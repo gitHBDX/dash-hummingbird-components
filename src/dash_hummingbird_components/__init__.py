@@ -128,3 +128,6 @@ CM_CONT = [
     "#2465a5",
     "#005ea1",
 ]
+
+DATA_PATH = "/data/hbdx_ldap_local/analysis/data/"
+DATASETS = load_datasets(DATA_PATH)

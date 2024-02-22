@@ -10,9 +10,9 @@ import dash_daq
 import pandas as pd
 import plotly.io as pio
 from dash import (ALL, MATCH, Input, Output, State, callback, ctx, dash_table,
-                  dcc, get_asset_url, html, no_update, clientside_callback)
+                  dcc, get_asset_url, html, no_update)
 
-from .. import cfg, exec
+from . import DATA_PATH, DATASETS, exec
 
 __all__ = ["DataSetPicker", "HTMLTable", "NotebookStarter", "PueueLog", "TagList", "PathSelector", "PlotDownloadButton"]
 logger = logging.getLogger("dhc")
@@ -86,8 +86,8 @@ class DataSetPicker:
     @staticmethod
     def _list_layout(id_, folder=None, file=None):
         options, value = [], None
-        if folder is not None and folder in cfg.datasets:
-            options = [{"label": f, "value": f"{folder}/{f}"} for f in cfg.datasets[folder]]
+        if folder is not None and folder in DATASETS:
+            options = [{"label": f, "value": f"{folder}/{f}"} for f in DATASETS[folder]]
             if file is not None:
                 value = f"{folder}/{file}"
 
@@ -104,7 +104,7 @@ class DataSetPicker:
                             html.Label("Folder"),
                             dcc.Dropdown(
                                 id={"module": "datasetpicker", "attr": "folder", "id": id_},
-                                options=[{"label": value, "value": value} for value in cfg.datasets.keys()],
+                                options=[{"label": value, "value": value} for value in DATASETS.keys()],
                                 value=folder,
                             ),
                         ]
@@ -170,7 +170,7 @@ def __datasetpicker_switch_layout_callback(n_clicks, id_, button_text):
 def __datasetpicker_folder_file_dropdown_callback(folder):
     if folder is None:
         return no_update
-    return [{"label": f, "value": f"{folder}/{f}"} for f in cfg.datasets[folder]]
+    return [{"label": f, "value": f"{folder}/{f}"} for f in DATASETS[folder]]
 
 
 @callback(
@@ -181,7 +181,7 @@ def __datasetpicker_folder_file_dropdown_callback(folder):
 def __datasetpicker_file_not_exists_error_callback(file):
     if file is None:
         return "", no_update
-    if not Path(file).exists() and not (Path(cfg.data.folder) / (file + ".h5ad")).exists():
+    if not Path(file).exists() and not (Path(DATA_PATH) / (file + ".h5ad")).exists():
         return f"does not exist", no_update
     return "", file
 
@@ -336,7 +336,7 @@ class PueueLog:
                 ],
                 className="columns",
             ),
-            html.A("Open in a new tab", href=f"{cfg.server.protocol}://{cfg.server.host}:8007/log/{task_id}", target="_blank"),
+            html.A("Open in a new tab", href=f"http://192.168.0.93:8007/log/{task_id}", target="_blank"),
             dcc.Markdown(
                 f"""
                 The command below is queued for execution. You can follow the execution progress in the log below.
@@ -538,7 +538,7 @@ class PlotDownloadButton:
             target="_blank",
         )
 
-        
+
 @callback(
     Output({"module": "plotdownloadbutton", "id": MATCH, "attr": "download"}, "data"),
     Input({"module": "plotdownloadbutton", "id": MATCH}, "n_clicks"),
