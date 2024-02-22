@@ -9,7 +9,7 @@ authors = [{ name = "Maurice Frank", email = "mfrank@hb-dx.com" }]
 maintainers = [{ name = "Maurice Frank", email = "mfrank@hb-dx.com" }]
 
 
-dependencies = ["dash", "dash-daq", "colorlover"]
+dependencies = ["dash", "dash-daq", "colorlover", "paramiko"]
 
 [project.urls]
 "Homepage" = "https://github.com/gitHBDX/dash-hummingbird-components"
