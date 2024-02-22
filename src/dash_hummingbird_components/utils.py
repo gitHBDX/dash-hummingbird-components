@@ -108,6 +108,6 @@ def discrete_background_color_bins(df: pd.DataFrame, n_bins: int = 5, lim: Tuple
 
 def load_datasets(folder: Path) -> Dict[str, List[str]]:
     folder = Path(folder)
-    datasets = {d.stem: natsorted([f for f in d.glob("*.h5ad")], reverse=True) for d in natsorted(fd for fd in folder.iterdir() if fd.is_dir())}
+    datasets = {d.stem: natsorted([f.stem for f in d.glob("*.h5ad")], reverse=True) for d in natsorted(fd for fd in folder.iterdir() if fd.is_dir())}
     datasets = {k: v for k, v in datasets.items() if len(v) > 0}
     return datasets
