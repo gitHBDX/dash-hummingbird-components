@@ -18,3 +18,4 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install .
+        python -c "import dash_hummingbird_components"
