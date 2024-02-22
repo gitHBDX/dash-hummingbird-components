@@ -12,7 +12,7 @@ maintainers = [{ name = "Maurice Frank", email = "mfrank@hb-dx.com" }]
 dependencies = ["dash", "dash-daq", "colorlover"]
 
 [project.urls]
-"Homepage" = "https://github.com/gitHBDX/dash_hummingbird_components"
+"Homepage" = "https://github.com/gitHBDX/dash-hummingbird-components"
 
 # [project.scripts] # Optional
 # sample = "sample:main"
