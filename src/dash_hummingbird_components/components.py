@@ -10,6 +10,7 @@ import dash_daq
 import dash_mantine_components as dmc
 import pandas as pd
 import plotly.io as pio
+import dash_mantine_components as dmc
 from dash import (ALL, MATCH, Input, Output, State, callback, ctx, dash_table,
                   dcc, get_asset_url, html, no_update)
 from dash_iconify import DashIconify
@@ -81,13 +82,14 @@ class DataSetPicker:
     @staticmethod
     def _absolute_layout(id_, value=None):
         return [
-            html.A(
+            dmc.Button(
                 "From list",
                 id={"module": "datasetpicker", "attr": "switch", "id": id_},
-                className="button field_toggle",
+                variant="subtle"
             ),
-            # html.Label("Data-set"),
-            dcc.Input(id={"module": "datasetpicker", "attr": "file", "id": id_}, value=value),
+            dmc.TextInput(id={"module": "datasetpicker", "attr": "file", "id": id_}, value=value,
+                            label="Path", description="Enter an absolute path to the AnnData", placeholder="Enter a path"
+                          ),
         ]
 
     @staticmethod
@@ -99,35 +101,30 @@ class DataSetPicker:
                 value = f"{folder}/{file}"
 
         return [
-            html.A(
+            dmc.Button(
                 "From path",
                 id={"module": "datasetpicker", "attr": "switch", "id": id_},
-                className="button field_toggle",
+                variant="subtle"
             ),
-            html.Div(
+            dmc.Group(
                 [
-                    html.Div(
-                        [
-                            html.Label("Folder"),
-                            dcc.Dropdown(
+                            dmc.Select(
                                 id={"module": "datasetpicker", "attr": "folder", "id": id_},
-                                options=[{"label": value, "value": value} for value in DATASETS.keys()],
+                                data=[{"label": value, "value": value} for value in DATASETS.keys()],
                                 value=folder,
+                                label="Folder",
+                                description="Select a folder", 
+                                placeholder="Select a folder",
                             ),
-                        ]
-                    ),
-                    html.Div(
-                        [
-                            html.Label("File"),
-                            dcc.Dropdown(
+                            dmc.Select(
                                 id={"module": "datasetpicker", "attr": "file", "id": id_},
                                 value=value,
-                                options=options,
+                                data=options,
+                                label="File",
+                                description="Select a file",
+                                placeholder="Select a file",
                             ),
-                        ]
-                    ),
                 ],
-                className="columns",
             ),
         ]
 
@@ -135,10 +132,10 @@ class DataSetPicker:
         if value is None or value == "" or value == "None":
             form = DataSetPicker._list_layout(id_)
         else:
-            from .. import cache
+            import anndata_cache
 
-            key = cache.Key(value)
-            if key.location == cache.CacheLocation.CACHED:
+            key = anndata_cache.Key(value)
+            if key.location == anndata_cache.CacheLocation.CACHED:
                 folder, file = key.name.split("/")
                 form = DataSetPicker._list_layout(id_, folder, file)
             else:
@@ -146,7 +143,7 @@ class DataSetPicker:
         return html.Fieldset(
             [
                 html.Legend(titelize(id_)),
-                html.Div(form, id={"module": "datasetpicker", "attr": "container", "id": id_}),
+                dmc.Stack(form, id={"module": "datasetpicker", "attr": "container", "id": id_}, align="end", spacing="0"),
                 html.Span(className="errorbox", id={"module": "datasetpicker", "attr": "error", "id": id_}),
                 dcc.Input(id={"module": "datasetpicker", "id": id_}, type="hidden", value=value),
             ],
@@ -170,7 +167,7 @@ def __datasetpicker_switch_layout_callback(n_clicks, id_, button_text):
 
 
 @callback(
-    Output({"module": "datasetpicker", "attr": "file", "id": MATCH}, "options"),
+    Output({"module": "datasetpicker", "attr": "file", "id": MATCH}, "data"),
     Input({"module": "datasetpicker", "attr": "folder", "id": MATCH}, "value"),
     prevent_initial_call=True,
 )
