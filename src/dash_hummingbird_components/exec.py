@@ -269,7 +269,7 @@ def start_notebook(name: str, parameters: Dict[str, Any] = None) -> str:
 
     logger.info(f"Starting Notebook {template} with {parameters}")
     stdout = execute(
-        f"/home/task_runner/conda/envs/hbdx/bin/papermill --prepare-only {template} {notebook} -b {parameters_encoded}",
+        f"/home/task_runner/miniforge3/envs/hbdx/bin/papermill --prepare-only {template} {notebook} -b {parameters_encoded}",
         user=ENV["JUPYTER_USER"],
         host=ENV["JUPYTER_HOST"],
     )
